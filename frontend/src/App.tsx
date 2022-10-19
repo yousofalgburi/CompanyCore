@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ChakraProvider, theme } from '@chakra-ui/react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import LoginPage from './components/auth/LoginPage'
+import RegisterPage from './components/auth/RegisterPage'
+import Homepage from './components/home/Homepage'
+import Header from './components/layout/Header'
+import { Provider } from 'react-redux'
+import store from './app/store'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+export const App = () => (
+	<Provider store={store}>
+		<ChakraProvider theme={theme}>
+			<BrowserRouter>
+				<Header />
+				<Routes>
+					<Route path='/' element={<Homepage />} />
+					<Route path='/login' element={<LoginPage />} />
+					<Route path='/register' element={<RegisterPage />} />
+				</Routes>
+			</BrowserRouter>
+		</ChakraProvider>
+	</Provider>
+)
