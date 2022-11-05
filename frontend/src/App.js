@@ -7,7 +7,6 @@ import theme from './theme'
 // Components
 import Navbar from './components/layout/Navbar'
 import Homepage from './components/layout/Homepage'
-import Footer from './components/layout/Footer'
 import LoginPage from './components/auth/LoginPage'
 import RegisterPage from './components/auth/RegisterPage'
 

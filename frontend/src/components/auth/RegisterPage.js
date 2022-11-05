@@ -2,26 +2,27 @@ import {
 	Box,
 	Button,
 	Container,
-	FormControl,
-	FormErrorMessage,
-	FormLabel,
 	Heading,
 	HStack,
-	Input,
 	Stack,
 	Text,
 	useBreakpointValue,
 	useColorModeValue,
+	Alert,
+	AlertIcon,
+	AlertTitle,
 } from '@chakra-ui/react'
 import PasswordField from './PasswordField'
 import { Link as ReachLink } from 'react-router-dom'
-import { useState } from 'react'
-import { Field, Form, Formik, useFormik } from 'formik'
+import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import InputField from './InputField'
+import { useDispatch, useSelector } from 'react-redux'
+import { registerUser } from '../../feature/user/userAction'
 
 const RegisterPage = () => {
-	const formik = useFormik({})
+	const dispatch = useDispatch()
+	const { loading, error } = useSelector((state) => state.user)
 
 	const ValidationSchema = {
 		name: Yup.string()
@@ -56,6 +57,12 @@ const RegisterPage = () => {
 						}}
 						textAlign='center'
 					>
+						{error && (
+							<Alert status='error'>
+								<AlertIcon />
+								<AlertTitle>{error}</AlertTitle>
+							</Alert>
+						)}
 						<Heading
 							size={useBreakpointValue({
 								base: 'xs',
@@ -109,6 +116,7 @@ const RegisterPage = () => {
 						validationSchema={Yup.object(ValidationSchema)}
 						onSubmit={(values, actions) => {
 							actions.setSubmitting(true)
+							dispatch(registerUser(values))
 						}}
 					>
 						{(formik) => (
@@ -137,11 +145,11 @@ const RegisterPage = () => {
 								/>
 								<Button
 									mt={4}
-									isLoading={formik.isSubmitting}
+									isLoading={formik.isSubmitting && !error}
 									colorScheme='blue'
 									type='submit'
 								>
-									Submit
+									Create Account
 								</Button>
 							</Stack>
 						)}

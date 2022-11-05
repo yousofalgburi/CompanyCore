@@ -9,7 +9,7 @@ import {
 	useDisclosure,
 	useMergeRefs,
 } from '@chakra-ui/react'
-import { Field, useField } from 'formik'
+import { useField } from 'formik'
 import * as React from 'react'
 import { HiEye, HiEyeOff } from 'react-icons/hi'
 
