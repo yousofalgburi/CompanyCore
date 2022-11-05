@@ -3,12 +3,14 @@ import { Provider } from 'react-redux'
 import { store } from './app/store'
 import App from './App'
 import './index.css'
+import { ColorModeScript } from '@chakra-ui/react'
 
 const container = document.getElementById('root')
 const root = createRoot(container)
 
 root.render(
 	<Provider store={store}>
+		<ColorModeScript />
 		<App />
 	</Provider>
 )
