@@ -27,3 +27,32 @@ export const registerUser = createAsyncThunk(
 		}
 	}
 )
+
+export const signinUser = createAsyncThunk(
+	'auth/signin',
+	async ({ email, password }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.post(
+				'http://localhost:8080/auth/signin',
+				{
+					email,
+					password,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			)
+			localStorage.setItem('user', JSON.stringify(data.result))
+			localStorage.setItem('userToken', JSON.stringify(data.token))
+			console.log(data)
+		} catch (error) {
+			if (error.response && error.response.data.message) {
+				return rejectWithValue(error.response.data.message)
+			} else {
+				return rejectWithValue(error.message)
+			}
+		}
+	}
+)

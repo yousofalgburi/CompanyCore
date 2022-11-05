@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const pool = require('../db/user.js')
 const secret = process.env.SECERT || 'test'
+const sendEmail = require('../utils/email')
 
 const signin = async (req, res) => {
 	const { email, password } = req.body
@@ -13,6 +14,12 @@ const signin = async (req, res) => {
 
 		if (!rows[0]?.email)
 			return res.status(404).json({ message: "User doesn't exist" })
+
+		if (!rows[0]?.verified)
+			return res.status(404).json({
+				message:
+					'User is not verified, please check your email to verify your account.',
+			})
 
 		const isPasswordCorrect = await bcrypt.compare(password, rows[0].password)
 
@@ -27,7 +34,9 @@ const signin = async (req, res) => {
 			}
 		)
 
-		res.status(200).json({ result: rows[0].email, token })
+		res
+			.status(200)
+			.json({ result: { name: rows[0].name, email: rows[0].email }, token })
 	} catch (err) {
 		res.status(500).json({ message: 'Something went wrong' })
 	}
@@ -62,7 +71,26 @@ const register = async (req, res) => {
 					}
 				)
 
-				result = `User added id: ${results.rows[0].user_id} email: ${results.rows[0].email} name: ${results.rows[0].name} password: ${results.rows[0].password}`
+				jwt.sign(
+					{ user: results.rows[0]?.user_id },
+					process.env.EMAIL_SECERT,
+					{ expiresIn: '1d' },
+					(err, emailToken) => {
+						const url = process.env.BASE_URL + 'auth/confirmation/' + emailToken
+
+						sendEmail(
+							results.rows[0].email,
+							'Email Verification',
+							`
+								<p>Please verify your email using this link: </p>
+								<br>
+								<a href="${url}" target="_blank">Link</a>
+							`
+						)
+					}
+				)
+
+				result = `User added with email: ${results.rows[0].email}`
 				res.status(201).json({ result, token })
 			}
 		)
@@ -72,7 +100,38 @@ const register = async (req, res) => {
 	}
 }
 
+const verifyEmail = async (req, res) => {
+	try {
+		const { user: user_id } = jwt.verify(
+			req.params.token,
+			process.env.EMAIL_SECERT
+		)
+
+		await pool.query(
+			'SELECT verified FROM users WHERE user_id = $1',
+			[user_id],
+			(error, results) => {
+				const { verified } = results.rows[0]
+
+				if (verified) {
+					return res.status(201).json('user already verified')
+				} else {
+					pool.query('UPDATE users SET verified = true WHERE user_id = $1', [
+						user_id,
+					])
+
+					return res.status(201).json('verified')
+				}
+			}
+		)
+	} catch (error) {
+		res.status(500).json({ message: 'Something went wrong' })
+		console.log('error: ' + error.message)
+	}
+}
+
 module.exports = {
 	signin,
 	register,
+	verifyEmail,
 }

@@ -19,10 +19,11 @@ import * as Yup from 'yup'
 import InputField from './InputField'
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../../feature/user/userAction'
+import { resetAuthState } from '../../feature/user/userSlice'
 
 const RegisterPage = () => {
 	const dispatch = useDispatch()
-	const { loading, error } = useSelector((state) => state.user)
+	const { error, success } = useSelector((state) => state.user.authState)
 
 	const ValidationSchema = {
 		name: Yup.string()
@@ -63,6 +64,15 @@ const RegisterPage = () => {
 								<AlertTitle>{error}</AlertTitle>
 							</Alert>
 						)}
+						{success && !error && (
+							<Alert status='success'>
+								<AlertIcon />
+								<AlertTitle>
+									Success! Please check your email to verify your account and
+									complete registration.
+								</AlertTitle>
+							</Alert>
+						)}
 						<Heading
 							size={useBreakpointValue({
 								base: 'xs',
@@ -78,6 +88,7 @@ const RegisterPage = () => {
 								as={ReachLink}
 								to='/auth/login'
 								colorScheme='blue'
+								onClick={dispatch(resetAuthState)}
 							>
 								Login
 							</Button>
@@ -145,7 +156,7 @@ const RegisterPage = () => {
 								/>
 								<Button
 									mt={4}
-									isLoading={formik.isSubmitting && !error}
+									isLoading={formik.isSubmitting && !error && !success}
 									colorScheme='blue'
 									type='submit'
 								>

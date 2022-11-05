@@ -3,7 +3,7 @@ const app = express()
 const port = 8080
 const bodyParser = require('body-parser')
 const cors = require('cors')
-
+require('dotenv').config()
 const user = require('./routes/user.js')
 
 app.use(bodyParser.json({ limit: '30mb', extended: true }))

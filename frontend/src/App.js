@@ -11,22 +11,16 @@ import LoginPage from './components/auth/LoginPage'
 import RegisterPage from './components/auth/RegisterPage'
 
 const App = () => {
-	const user = JSON.parse(localStorage.getItem('profile'))
+	const user = JSON.parse(localStorage.getItem('user'))
 
 	return (
 		<ChakraProvider theme={theme}>
 			<BrowserRouter>
 				<Navbar />
 				<Routes>
-					<Route path='/' element={<Homepage />} />
-					<Route
-						path='/auth'
-						exact
-						element={!user ? <Navigate to='login' /> : <Navigate to='/' />}
-					/>
-					<Route path='/auth/login' exact element={<LoginPage />} />
-					<Route path='/auth/register' exact element={<RegisterPage />} />
-					<Route path='*' exact element={<Navigate to='/' />} />
+					<Route path='/' element={<Homepage />} exact />
+					<Route path='/auth/login' element={<LoginPage />} exact />
+					<Route path='/auth/register' element={<RegisterPage />} exact />
 				</Routes>
 			</BrowserRouter>
 		</ChakraProvider>
