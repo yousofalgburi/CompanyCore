@@ -11,8 +11,8 @@ import {
 import ColorModeSwitcher from '../misc/ColorModeSwitcher'
 import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import NotificationsBell from '../misc/NotificationsBell'
-import { logout } from '../../feature/user/userSlice'
-import { useDispatch } from 'react-redux'
+import { logout } from '../../features/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Navbar = () => {
 	const dispatch = useDispatch()
@@ -20,10 +20,10 @@ const Navbar = () => {
 
 	let name
 
-	const user = JSON.parse(localStorage.getItem('user'))
+	const { userData } = useSelector((state) => state.user)
 
-	if (user) {
-		name = user.name
+	if (userData) {
+		name = userData.name
 	}
 
 	const handleLogout = async () => {

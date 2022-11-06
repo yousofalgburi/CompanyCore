@@ -10,24 +10,24 @@ import Homepage from './components/layout/Homepage'
 import LoginPage from './components/auth/LoginPage'
 import RegisterPage from './components/auth/RegisterPage'
 import { useDispatch } from 'react-redux'
-import { logout, setUser } from './feature/user/userSlice'
+import { logout, setUser } from './features/user/userSlice'
 import { useEffect } from 'react'
 
 const App = () => {
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		const token = JSON.parse(localStorage.getItem('userToken'))
+		const user = JSON.parse(localStorage.getItem('userData'))
 
-		if (token) {
-			const decodedToken = decode(token)
+		if (user?.token) {
+			const decodedToken = decode(user?.token)
 
 			if (decodedToken.exp * 1000 < new Date().getTime()) {
 				dispatch(logout())
 			}
 		}
 
-		dispatch(setUser(JSON.parse(localStorage.getItem('user'))))
+		dispatch(setUser(user))
 	}, [dispatch])
 
 	return (

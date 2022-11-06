@@ -18,12 +18,11 @@ const userSlice = createSlice({
 			state.authState = initialState.authState
 		},
 		logout: (state) => {
-			state.userInfo = null
+			state.userData = null
 			state.userToken = null
 			state.authState = initialState.authState
 		},
 		setUser: (state, { payload }) => {
-			console.log(payload)
 			state.userData = JSON.parse(localStorage.getItem('user'))
 			state.userToken = JSON.parse(localStorage.getItem('userToken'))
 		},
@@ -41,10 +40,13 @@ const userSlice = createSlice({
 			state.authState.loading = false
 			state.authState.success = true
 
-			localStorage.setItem('user', JSON.stringify(payload.result))
-			localStorage.setItem('userToken', JSON.stringify(payload.token))
-			state.userData = JSON.parse(localStorage.getItem('user'))
-			state.userToken = JSON.parse(localStorage.getItem('userToken'))
+			const { name, email } = payload.result
+			const token = payload.token
+
+			localStorage.setItem('userData', JSON.stringify({ name, email, token }))
+
+			state.userData = { name, email }
+			state.userToken = token
 		},
 		[signinUser.rejected]: (state, { payload }) => {
 			state.authState.loading = false

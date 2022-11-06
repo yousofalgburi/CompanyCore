@@ -18,8 +18,8 @@ import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import InputField from './InputField'
 import { useDispatch, useSelector } from 'react-redux'
-import { registerUser } from '../../feature/user/userAction'
-import { resetAuthState } from '../../feature/user/userSlice'
+import { registerUser } from '../../features/user/userAction'
+import { resetAuthState } from '../../features/user/userSlice'
 import { useEffect } from 'react'
 
 const RegisterPage = () => {

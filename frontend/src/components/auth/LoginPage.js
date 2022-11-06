@@ -17,16 +17,17 @@ import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import { Form, Formik } from 'formik'
 import InputField from './InputField'
 import { useDispatch, useSelector } from 'react-redux'
-import { signinUser } from '../../feature/user/userAction'
-import { resetAuthState } from '../../feature/user/userSlice'
+import { signinUser } from '../../features/user/userAction'
+import { resetAuthState } from '../../features/user/userSlice'
 import { useEffect } from 'react'
 
 const LoginPage = () => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const { error, success } = useSelector((state) => state.user.authState)
-	const user = localStorage.getItem('user')
+	const state = useSelector((state) => state.user)
+	const { error, success } = state.authState
+	const user = state.userData
 
 	useEffect(() => {
 		if (user) navigate('/')
