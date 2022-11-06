@@ -5,7 +5,9 @@ const secret = process.env.SECERT || 'test'
 const sendEmail = require('../utils/email')
 
 const signin = async (req, res) => {
-	const { email, password } = req.body
+	let { email, password } = req.body
+
+	email = email.toLowerCase()
 
 	try {
 		let { rows } = await pool.query('SELECT * FROM users WHERE email = $1', [
@@ -43,7 +45,9 @@ const signin = async (req, res) => {
 }
 
 const register = async (req, res) => {
-	const { name, email, password } = req.body
+	let { name, email, password } = req.body
+
+	email = email.toLowerCase()
 
 	try {
 		let { rows } = await pool.query('SELECT * FROM users WHERE email = $1', [

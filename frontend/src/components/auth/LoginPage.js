@@ -26,10 +26,11 @@ const LoginPage = () => {
 	const navigate = useNavigate()
 
 	const { error, success } = useSelector((state) => state.user.authState)
+	const user = localStorage.getItem('user')
 
 	useEffect(() => {
-		if (success === true) navigate('/')
-	}, [success, navigate])
+		if (user) navigate('/')
+	}, [user, navigate])
 
 	return (
 		<Container

@@ -44,9 +44,8 @@ export const signinUser = createAsyncThunk(
 					},
 				}
 			)
-			localStorage.setItem('user', JSON.stringify(data.result))
-			localStorage.setItem('userToken', JSON.stringify(data.token))
-			console.log(data)
+
+			return data
 		} catch (error) {
 			if (error.response && error.response.data.message) {
 				return rejectWithValue(error.response.data.message)

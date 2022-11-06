@@ -9,7 +9,7 @@ import {
 	Button,
 } from '@chakra-ui/react'
 import ColorModeSwitcher from '../misc/ColorModeSwitcher'
-import { Link as ReachLink, Navigate, useNavigate } from 'react-router-dom'
+import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import NotificationsBell from '../misc/NotificationsBell'
 import { logout } from '../../feature/user/userSlice'
 import { useDispatch } from 'react-redux'
@@ -26,11 +26,11 @@ const Navbar = () => {
 		name = user.name
 	}
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
 		localStorage.removeItem('user')
 		localStorage.removeItem('userToken')
-		dispatch(logout())
-		return <Navigate to='/' />
+		await dispatch(logout())
+		navigate('/auth/login')
 	}
 
 	return (

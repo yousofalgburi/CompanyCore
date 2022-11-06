@@ -13,17 +13,25 @@ import {
 	AlertTitle,
 } from '@chakra-ui/react'
 import PasswordField from './PasswordField'
-import { Link as ReachLink } from 'react-router-dom'
+import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import InputField from './InputField'
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../../feature/user/userAction'
 import { resetAuthState } from '../../feature/user/userSlice'
+import { useEffect } from 'react'
 
 const RegisterPage = () => {
 	const dispatch = useDispatch()
 	const { error, success } = useSelector((state) => state.user.authState)
+
+	const user = localStorage.getItem('user')
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if (user) navigate('/')
+	}, [user, navigate])
 
 	const ValidationSchema = {
 		name: Yup.string()

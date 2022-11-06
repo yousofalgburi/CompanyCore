@@ -2,12 +2,11 @@ import { createSlice } from '@reduxjs/toolkit'
 import { registerUser, signinUser } from './userAction'
 
 const initialState = {
-	userInfo: null,
+	userData: null,
 	userToken: null,
 	authState: {
 		error: null,
 		success: false,
-		loading: false,
 	},
 }
 
@@ -21,14 +20,16 @@ const userSlice = createSlice({
 		logout: (state) => {
 			state.userInfo = null
 			state.userToken = null
+			state.authState = initialState.authState
+		},
+		setUser: (state, { payload }) => {
+			console.log(payload)
+			state.userData = JSON.parse(localStorage.getItem('user'))
+			state.userToken = JSON.parse(localStorage.getItem('userToken'))
 		},
 	},
 	extraReducers: {
-		[registerUser.pending]: (state) => {
-			state.authState.loading = true
-			state.authState.error = null
-		},
-		[registerUser.fulfilled]: (state, { payload }) => {
+		[registerUser.fulfilled]: (state) => {
 			state.authState.loading = false
 			state.authState.success = true
 		},
@@ -36,15 +37,13 @@ const userSlice = createSlice({
 			state.authState.loading = false
 			state.authState.error = payload
 		},
-		[signinUser.pending]: (state) => {
-			state.authState.loading = true
-			state.authState.error = null
-		},
 		[signinUser.fulfilled]: (state, { payload }) => {
 			state.authState.loading = false
 			state.authState.success = true
 
-			state.userInfo = JSON.parse(localStorage.getItem('user'))
+			localStorage.setItem('user', JSON.stringify(payload.result))
+			localStorage.setItem('userToken', JSON.stringify(payload.token))
+			state.userData = JSON.parse(localStorage.getItem('user'))
 			state.userToken = JSON.parse(localStorage.getItem('userToken'))
 		},
 		[signinUser.rejected]: (state, { payload }) => {
@@ -54,5 +53,5 @@ const userSlice = createSlice({
 	},
 })
 
-export const { resetAuthState, logout } = userSlice.actions
+export const { resetAuthState, logout, setUser } = userSlice.actions
 export default userSlice.reducer
