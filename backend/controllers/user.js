@@ -36,9 +36,15 @@ const signin = async (req, res) => {
 			}
 		)
 
-		res
-			.status(200)
-			.json({ result: { name: rows[0].name, email: rows[0].email }, token })
+		res.status(200).json({
+			result: {
+				name: rows[0].name,
+				email: rows[0].email,
+				team: rows[0].team,
+				admin: rows[0].admin,
+			},
+			token,
+		})
 	} catch (err) {
 		res.status(500).json({ message: 'Something went wrong' })
 	}

@@ -27,8 +27,6 @@ const Navbar = () => {
 	}
 
 	const handleLogout = async () => {
-		localStorage.removeItem('user')
-		localStorage.removeItem('userToken')
 		await dispatch(logout())
 		navigate('/auth/login')
 	}
