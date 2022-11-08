@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 require('dotenv').config()
 const user = require('./routes/user.js')
+const team = require('./routes/team.js')
 
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
@@ -15,6 +16,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/auth', user)
+app.use('/team', team)
 
 app.listen(port, () => {
 	console.log(`App running on port ${port}.`)

@@ -13,7 +13,6 @@ import { useDispatch } from 'react-redux'
 import { logout, setUser } from './features/user/userSlice'
 import { useEffect } from 'react'
 import Team from './components/pages/team/Team'
-import ProtectedRoutes from './components/misc/ProtectedRoutes'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -39,37 +38,11 @@ const App = () => {
 					<Route
 						path='/'
 						exact
-						element={
-							user?.userData && user?.userData?.team ? (
-								<Homepage />
-							) : (
-								<Navigate to='/team' />
-							)
-						}
+						element={user?.team ? <Homepage /> : <Navigate to='/team' />}
 					/>
-					<Route
-						path='/auth/login'
-						exact
-						element={user?.userData ? <Navigate to='/' /> : <LoginPage />}
-					/>
-					<Route
-						path='/auth/register'
-						exact
-						element={user?.userData ? <Navigate to='/' /> : <RegisterPage />}
-					/>
-					<Route
-						path='/team'
-						exact
-						element={
-							user?.userData && user?.userData?.team ? (
-								<Navigate to='/' />
-							) : (
-								<ProtectedRoutes>
-									<Team />
-								</ProtectedRoutes>
-							)
-						}
-					/>
+					<Route path='/auth/login' exact element={<LoginPage />} />
+					<Route path='/auth/register' exact element={<RegisterPage />} />
+					<Route path='/team' exact element={<Team />} />
 					<Route path='*' exact element={<Navigate to='/' />} />
 				</Routes>
 			</BrowserRouter>

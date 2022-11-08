@@ -1,15 +1,20 @@
-import {
-	Button,
-	Center,
-	Container,
-	Divider,
-	Heading,
-	Input,
-	Stack,
-	Text,
-} from '@chakra-ui/react'
+import { Container } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import CreateTeam from './CreateTeam'
+import JoinTeam from './JoinTeam'
 
 const Team = () => {
+	const state = useSelector((state) => state.user)
+	const navigate = useNavigate()
+	const [joinTeamPage, setJoinTeamPage] = useState(true)
+	const team = state.userData?.team
+
+	useEffect(() => {
+		if (team) navigate('/')
+	}, [team, navigate])
+
 	return (
 		<Container
 			maxW='lg'
@@ -22,23 +27,14 @@ const Team = () => {
 				sm: '8',
 			}}
 		>
-			<Stack spacing='6'>
-				<Heading>Join a Team</Heading>
-				<Input placeholder='team code' />
-				<Button>Join</Button>
-			</Stack>
-
-			<Divider />
-
-			<Center>
-				<Text>Or</Text>
-			</Center>
-
-			<Divider />
-
-			<Stack spacing='8'>
-				<Button>Create New Team</Button>
-			</Stack>
+			{joinTeamPage ? (
+				<JoinTeam setJoinTeamPage={setJoinTeamPage} />
+			) : (
+				<CreateTeam
+					email={state.userData.email}
+					setJoinTeamPage={setJoinTeamPage}
+				/>
+			)}
 		</Container>
 	)
 }

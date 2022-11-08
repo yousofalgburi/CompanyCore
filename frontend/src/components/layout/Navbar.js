@@ -18,12 +18,13 @@ const Navbar = () => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	let name
+	let name, teamName
 
 	const { userData } = useSelector((state) => state.user)
 
 	if (userData) {
 		name = userData.name
+		teamName = userData?.team?.teamName
 	}
 
 	const handleLogout = async () => {
@@ -46,7 +47,8 @@ const Navbar = () => {
 					<HStack>
 						{name ? (
 							<>
-								<Text>Welcome, {name}</Text>
+								<Text>Welcome, {name} | </Text>
+								<Text>Team: {teamName}</Text>
 								<Button colorScheme='blue' onClick={handleLogout}>
 									Logout
 								</Button>

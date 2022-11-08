@@ -36,16 +36,37 @@ const signin = async (req, res) => {
 			}
 		)
 
+		let results
+
+		if (rows[0].team) {
+			results = await pool.query('SELECT * FROM teams WHERE teamcode = $1', [
+				rows[0].team,
+			])
+		}
+
+		let resultSendBack = {
+			name: rows[0].name,
+			email: rows[0].email,
+			admin: rows[0].admin,
+			team: null,
+		}
+
+		if (results) {
+			resultSendBack = {
+				...resultSendBack,
+				team: {
+					teamName: results.rows[0].teamname,
+					teamCode: results.rows[0].teamcode,
+				},
+			}
+		}
+
 		res.status(200).json({
-			result: {
-				name: rows[0].name,
-				email: rows[0].email,
-				team: rows[0].team,
-				admin: rows[0].admin,
-			},
+			result: resultSendBack,
 			token,
 		})
 	} catch (err) {
+		console.log(err)
 		res.status(500).json({ message: 'Something went wrong' })
 	}
 }

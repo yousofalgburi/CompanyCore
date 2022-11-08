@@ -1,9 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { registerUser, signinUser } from './userAction'
+import { createTeam, joinTeam } from '../team/teamActions'
 
 const initialState = {
 	userData: null,
 	authState: {
+		error: null,
+		success: false,
+	},
+	teamState: {
 		error: null,
 		success: false,
 	},
@@ -40,13 +45,42 @@ const userSlice = createSlice({
 				JSON.stringify({ ...payload.result, token: payload.token })
 			)
 			state.userData = { ...payload.result, token: payload.token }
-
 			state.authState.loading = false
 			state.authState.success = true
 		},
 		[signinUser.rejected]: (state, { payload }) => {
 			state.authState.loading = false
 			state.authState.error = payload
+		},
+		[createTeam.fulfilled]: (state, { payload }) => {
+			state.userData.team = {
+				teamName: payload.teamName,
+				teamCode: payload.teamCode,
+			}
+
+			localStorage.setItem('userData', JSON.stringify({ ...state.userData }))
+
+			state.teamState.loading = false
+			state.teamState.success = true
+		},
+		[createTeam.rejected]: (state, { payload }) => {
+			state.teamState.loading = false
+			state.teamState.error = payload
+		},
+		[joinTeam.fulfilled]: (state, { payload }) => {
+			state.userData.team = {
+				teamName: payload.teamName,
+				teamCode: payload.teamCode,
+			}
+
+			localStorage.setItem('userData', JSON.stringify({ ...state.userData }))
+
+			state.teamState.loading = false
+			state.teamState.success = true
+		},
+		[joinTeam.rejected]: (state, { payload }) => {
+			state.teamState.loading = false
+			state.teamState.error = payload
 		},
 	},
 })

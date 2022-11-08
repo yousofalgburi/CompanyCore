@@ -3,12 +3,13 @@ import axios from 'axios'
 
 export const createTeam = createAsyncThunk(
 	'team/createTeam',
-	async ({ teamName }, { rejectWithValue }) => {
+	async ({ teamName, email }, { rejectWithValue }) => {
 		try {
-			await axios.post(
+			const { data } = await axios.post(
 				'http://localhost:8080/team/createTeam',
 				{
 					teamName,
+					email,
 				},
 				{
 					headers: {
@@ -16,6 +17,8 @@ export const createTeam = createAsyncThunk(
 					},
 				}
 			)
+
+			return data
 		} catch (error) {
 			if (error.response && error.response.data.message) {
 				return rejectWithValue(error.response.data.message)
@@ -28,12 +31,13 @@ export const createTeam = createAsyncThunk(
 
 export const joinTeam = createAsyncThunk(
 	'team/joinTeam',
-	async ({ teamCode }, { rejectWithValue }) => {
+	async ({ teamCode, email }, { rejectWithValue }) => {
 		try {
-			await axios.post(
+			const { data } = await axios.post(
 				'http://localhost:8080/team/joinTeam',
 				{
 					teamCode,
+					email,
 				},
 				{
 					headers: {
@@ -41,6 +45,8 @@ export const joinTeam = createAsyncThunk(
 					},
 				}
 			)
+
+			return data
 		} catch (error) {
 			if (error.response && error.response.data.message) {
 				return rejectWithValue(error.response.data.message)
