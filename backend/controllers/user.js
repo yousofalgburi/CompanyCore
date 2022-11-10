@@ -36,10 +36,10 @@ const signin = async (req, res) => {
 			}
 		)
 
-		let results
+		let teamResult
 
 		if (rows[0].team) {
-			results = await pool.query('SELECT * FROM teams WHERE teamcode = $1', [
+			teamResult = await pool.query('SELECT * FROM teams WHERE teamcode = $1', [
 				rows[0].team,
 			])
 		}
@@ -51,12 +51,12 @@ const signin = async (req, res) => {
 			team: null,
 		}
 
-		if (results) {
+		if (teamResult) {
 			resultSendBack = {
 				...resultSendBack,
 				team: {
-					teamName: results.rows[0].teamname,
-					teamCode: results.rows[0].teamcode,
+					teamName: teamResult.rows[0].teamname,
+					teamCode: teamResult.rows[0].teamcode,
 				},
 			}
 		}
