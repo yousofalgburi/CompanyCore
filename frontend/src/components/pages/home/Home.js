@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
-const Homepage = () => {
+const Home = () => {
 	const state = useSelector((state) => state.user)
 	const navigate = useNavigate()
 	const userData = state?.userData
@@ -10,12 +10,10 @@ const Homepage = () => {
 	useEffect(() => {
 		if (userData && !userData?.team) {
 			navigate('/team')
-		} else if (userData && userData?.team) {
-			navigate('/home')
 		}
 	}, [userData, navigate])
 
-	return <h1>Homepage</h1>
+	return <h1>inside home</h1>
 }
 
-export default Homepage
+export default Home

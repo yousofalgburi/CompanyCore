@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux'
 import { logout, setUser } from './features/user/userSlice'
 import { useEffect } from 'react'
 import Team from './components/pages/team/Team'
+import Home from './components/pages/home/Home'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -35,11 +36,8 @@ const App = () => {
 			<BrowserRouter>
 				<Navbar />
 				<Routes>
-					<Route
-						path='/'
-						exact
-						element={user?.team ? <Homepage /> : <Navigate to='/team' />}
-					/>
+					<Route path='/' exact element={<Homepage />} />
+					<Route path='/home' exact element={<Home />} />
 					<Route path='/auth/login' exact element={<LoginPage />} />
 					<Route path='/auth/register' exact element={<RegisterPage />} />
 					<Route path='/team' exact element={<Team />} />

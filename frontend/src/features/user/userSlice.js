@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { registerUser, signinUser } from './userAction'
-import { createTeam, joinTeam } from '../team/teamActions'
+import { createTeam, joinTeam, leaveTeam } from '../team/teamActions'
 
 const initialState = {
 	userData: null,
@@ -79,6 +79,17 @@ const userSlice = createSlice({
 			state.teamState.success = true
 		},
 		[joinTeam.rejected]: (state, { payload }) => {
+			state.teamState.loading = false
+			state.teamState.error = payload
+		},
+		[leaveTeam.fulfilled]: (state, { payload }) => {
+			state.userData.team = null
+			localStorage.setItem('userData', JSON.stringify({ ...state.userData }))
+
+			state.teamState.loading = false
+			state.teamState.success = true
+		},
+		[leaveTeam.rejected]: (state, { payload }) => {
 			state.teamState.loading = false
 			state.teamState.error = payload
 		},

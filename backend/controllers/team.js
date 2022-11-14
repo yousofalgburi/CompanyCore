@@ -81,6 +81,24 @@ const leaveTeam = async (req, res) => {
 	let { email } = req.body
 
 	try {
+		let results = await pool.query('SELECT * FROM users WHERE email = $1', [
+			email,
+		])
+
+		if (!results?.rows[0]?.user_id) {
+			return res.status(404).json({ message: 'User does not exist' })
+		}
+
+		if (!results?.rows[0]?.team) {
+			return res.status(404).json({ message: 'User not in team' })
+		}
+
+		await pool.query('UPDATE users SET team = $1 WHERE email = $2', [
+			null,
+			email,
+		])
+
+		res.status(201).json()
 	} catch (error) {
 		res.status(500).json({ message: 'Something went wrong' })
 		console.log(error)

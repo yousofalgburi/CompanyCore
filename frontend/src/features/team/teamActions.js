@@ -56,3 +56,28 @@ export const joinTeam = createAsyncThunk(
 		}
 	}
 )
+
+export const leaveTeam = createAsyncThunk(
+	'team/leaveTeam',
+	async ({ email }, { rejectWithValue }) => {
+		try {
+			await axios.post(
+				'http://localhost:8080/team/leaveTeam',
+				{
+					email,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			)
+		} catch (error) {
+			if (error.response && error.response.data.message) {
+				return rejectWithValue(error.response.data.message)
+			} else {
+				return rejectWithValue(error.message)
+			}
+		}
+	}
+)
