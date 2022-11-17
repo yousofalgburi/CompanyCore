@@ -11,7 +11,7 @@ import {
 import ColorModeSwitcher from '../misc/ColorModeSwitcher'
 import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import NotificationsBell from '../misc/NotificationsBell'
-import { logout } from '../../features/user/userSlice'
+import { logout, resetTeamState } from '../../features/user/userSlice'
 import { leaveTeam } from '../../features/team/teamActions'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -19,13 +19,15 @@ const Navbar = () => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	let name, teamName
+	let name,
+		teamName = 'No Team'
 
 	const { userData } = useSelector((state) => state.user)
 
 	if (userData) {
 		name = userData.name
-		teamName = userData?.team?.teamName
+
+		if (userData?.team) teamName = userData.team.teamName
 	}
 
 	const handleLogout = async () => {
@@ -35,7 +37,7 @@ const Navbar = () => {
 
 	const handleLeaveTeam = async () => {
 		dispatch(leaveTeam({ email: userData.email }))
-		navigate('/team')
+		dispatch(resetTeamState())
 	}
 
 	return (
@@ -54,9 +56,10 @@ const Navbar = () => {
 						{name ? (
 							<>
 								<Text>Welcome, {name} | </Text>
+								<Text>Team: {teamName}</Text>
+
 								{userData.team && (
 									<>
-										<Text>Team: {teamName}</Text>
 										<Button
 											colorScheme='red'
 											size='sm'

@@ -4,37 +4,25 @@ const joinTeam = async (req, res) => {
 	let { teamCode, email } = req.body
 
 	try {
-		let { rows } = await pool.query('SELECT * FROM teams WHERE teamcode = $1', [
-			teamCode,
-		])
+		let teamResults = await pool.query(
+			'SELECT * FROM teams WHERE teamcode = $1',
+			[teamCode]
+		)
 
-		if (!rows[0]?.teamname)
+		if (!teamResults?.rows[0]?.teamname)
 			return res.status(404).json({ message: "Team doesn't exist" })
 
-		let results = await pool.query('SELECT * FROM users WHERE email = $1', [
-			email,
-		])
+		const userResults = await pool.query(
+			'UPDATE users SET team = $1 WHERE email = $2 RETURNING *;',
+			[teamCode, email]
+		)
 
-		if (!results?.rows[0]?.user_id) {
+		if (!userResults?.rows[0]?.user_id)
 			return res.status(404).json({ message: 'User does not exist' })
-		}
-
-		let teamInfo = await pool.query('SELECT * FROM teams WHERE teamcode = $1', [
-			teamCode,
-		])
-
-		await pool.query('UPDATE users SET team = $1 WHERE user_id = $2', [
-			teamCode,
-			results?.rows[0]?.user_id,
-		])
 
 		res.status(200).json({
-			result: {
-				team: {
-					teamName: teamInfo.rows[0].teamname,
-					teamCode: teamInfo.rows[0].teamcode,
-				},
-			},
+			teamName: teamResults.rows[0].teamname,
+			teamCode: teamResults.rows[0].teamcode,
 		})
 	} catch (error) {
 		console.log(error)
@@ -50,30 +38,25 @@ const createTeam = async (req, res) => {
 		await pool.query(
 			'INSERT INTO teams(teamName, teamCode) VALUES($1, $2) RETURNING *;',
 			[teamName, teamCode],
-			(error, results) => {
+			(error, { rows: [{ teamname, teamcode }] }) => {
 				if (error) {
 					return console.log(error)
 				}
 
 				pool.query(
-					'UPDATE users SET team = $1 WHERE email = $2',
-					[results.rows[0].teamcode, email],
-					(error, results) => {
-						if (error) {
-							return console.log(error)
-						}
-					}
+					'UPDATE users SET team = $1, admin = true WHERE email = $2',
+					[teamcode, email]
 				)
 
 				res.status(201).json({
-					teamName: results.rows[0].teamname,
-					teamCode: results.rows[0].teamcode,
+					teamName: teamname,
+					teamCode: teamcode,
 				})
 			}
 		)
 	} catch (error) {
-		res.status(500).json({ message: 'Something went wrong' })
 		console.log(error)
+		res.status(500).json({ message: 'Something went wrong' })
 	}
 }
 
@@ -93,10 +76,10 @@ const leaveTeam = async (req, res) => {
 			return res.status(404).json({ message: 'User not in team' })
 		}
 
-		await pool.query('UPDATE users SET team = $1 WHERE email = $2', [
-			null,
-			email,
-		])
+		await pool.query(
+			'UPDATE users SET team = $1, admin = false WHERE email = $2',
+			[null, email]
+		)
 
 		res.status(201).json()
 	} catch (error) {

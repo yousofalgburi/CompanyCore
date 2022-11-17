@@ -29,6 +29,9 @@ const userSlice = createSlice({
 		setUser: (state, { payload }) => {
 			state.userData = { ...payload }
 		},
+		resetTeamState: (state) => {
+			state.teamState = initialState.teamState
+		},
 	},
 	extraReducers: {
 		[registerUser.fulfilled]: (state) => {
@@ -73,6 +76,8 @@ const userSlice = createSlice({
 				teamCode: payload.teamCode,
 			}
 
+			state.userData.admin = true
+
 			localStorage.setItem('userData', JSON.stringify({ ...state.userData }))
 
 			state.teamState.loading = false
@@ -96,5 +101,6 @@ const userSlice = createSlice({
 	},
 })
 
-export const { resetAuthState, logout, setUser } = userSlice.actions
+export const { resetAuthState, logout, setUser, resetTeamState } =
+	userSlice.actions
 export default userSlice.reducer

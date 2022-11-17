@@ -1,4 +1,10 @@
-import { Container } from '@chakra-ui/react'
+import {
+	Alert,
+	AlertIcon,
+	AlertTitle,
+	Container,
+	Stack,
+} from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -10,9 +16,10 @@ const Team = () => {
 	const navigate = useNavigate()
 	const [joinTeamPage, setJoinTeamPage] = useState(true)
 	const team = state.userData?.team
+	const error = state?.teamState?.error
 
 	useEffect(() => {
-		if (team) navigate('/')
+		if (team) navigate('/home')
 	}, [team, navigate])
 
 	return (
@@ -27,14 +34,26 @@ const Team = () => {
 				sm: '8',
 			}}
 		>
-			{joinTeamPage ? (
-				<JoinTeam setJoinTeamPage={setJoinTeamPage} />
-			) : (
-				<CreateTeam
-					email={state.userData.email}
-					setJoinTeamPage={setJoinTeamPage}
-				/>
-			)}
+			<Stack spacing='6'>
+				{error && (
+					<Alert status='error'>
+						<AlertIcon />
+						<AlertTitle>{error}</AlertTitle>
+					</Alert>
+				)}
+
+				{joinTeamPage ? (
+					<JoinTeam
+						email={state?.userData?.email}
+						setJoinTeamPage={setJoinTeamPage}
+					/>
+				) : (
+					<CreateTeam
+						email={state?.userData?.email}
+						setJoinTeamPage={setJoinTeamPage}
+					/>
+				)}
+			</Stack>
 		</Container>
 	)
 }
