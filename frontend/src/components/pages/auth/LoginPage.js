@@ -15,35 +15,23 @@ import {
 import PasswordField from './PasswordField'
 import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import { Form, Formik } from 'formik'
-import * as Yup from 'yup'
 import InputField from './InputField'
 import { useDispatch, useSelector } from 'react-redux'
-import { registerUser } from '../../features/user/userAction'
-import { resetAuthState } from '../../features/user/userSlice'
+import { signinUser } from '../../../features/user/userAction'
+import { resetAuthState } from '../../../features/user/userSlice'
 import { useEffect } from 'react'
 
-const RegisterPage = () => {
+const LoginPage = () => {
 	const dispatch = useDispatch()
-	const { error, success } = useSelector((state) => state.user.authState)
-
-	const user = localStorage.getItem('user')
+	const user = useSelector((state) => state.user)
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		if (user) navigate('/')
+		if (user?.userData) navigate('/team')
 	}, [user, navigate])
 
-	const ValidationSchema = {
-		name: Yup.string()
-			.min(2, 'Too Short!')
-			.max(50, 'Too Long!')
-			.required('name required'),
-		email: Yup.string().email('Invalid email').required('email required'),
-		password: Yup.string().min(8, 'too short!').required('password required'),
-		confirmPassword: Yup.string()
-			.required('confirm password required')
-			.oneOf([Yup.ref('password'), null], 'passwords must match'),
-	}
+	const state = useSelector((state) => state.user)
+	const { error, success } = state.authState
 
 	return (
 		<Container
@@ -72,33 +60,24 @@ const RegisterPage = () => {
 								<AlertTitle>{error}</AlertTitle>
 							</Alert>
 						)}
-						{success && !error && (
-							<Alert status='success'>
-								<AlertIcon />
-								<AlertTitle>
-									Success! Please check your email to verify your account and
-									complete registration.
-								</AlertTitle>
-							</Alert>
-						)}
 						<Heading
 							size={useBreakpointValue({
 								base: 'xs',
 								md: 'sm',
 							})}
 						>
-							Register a new account
+							Sign in to your account
 						</Heading>
 						<HStack spacing='1' justify='center'>
-							<Text color='muted'>Already have an account?</Text>
+							<Text color='muted'>Need to create an account?</Text>
 							<Button
 								variant='link'
 								as={ReachLink}
-								to='/auth/login'
+								to='/auth/register'
 								colorScheme='blue'
 								onClick={dispatch(resetAuthState)}
 							>
-								Login
+								Register
 							</Button>
 						</HStack>
 					</Stack>
@@ -127,25 +106,16 @@ const RegisterPage = () => {
 				>
 					<Formik
 						initialValues={{
-							name: '',
 							email: '',
 							password: '',
-							confirmPassword: '',
 						}}
-						validationSchema={Yup.object(ValidationSchema)}
 						onSubmit={(values, actions) => {
 							actions.setSubmitting(true)
-							dispatch(registerUser(values))
+							dispatch(signinUser(values))
 						}}
 					>
 						{(formik) => (
 							<Stack spacing='4' as={Form} onSubmit={formik.handleSubmit}>
-								<InputField
-									label='Name'
-									name='name'
-									placeholder='name'
-									type='text'
-								/>
 								<InputField
 									label='Email'
 									name='email'
@@ -157,18 +127,13 @@ const RegisterPage = () => {
 									name='password'
 									placeholder='password'
 								/>
-								<PasswordField
-									formik={formik}
-									name='confirmPassword'
-									placeholder='confirm password'
-								/>
 								<Button
 									mt={4}
 									isLoading={formik.isSubmitting && !error && !success}
 									colorScheme='blue'
 									type='submit'
 								>
-									Create Account
+									Sign in
 								</Button>
 							</Stack>
 						)}
@@ -179,4 +144,4 @@ const RegisterPage = () => {
 	)
 }
 
-export default RegisterPage
+export default LoginPage

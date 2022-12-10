@@ -14,6 +14,7 @@ import NotificationsBell from '../misc/NotificationsBell'
 import { logout, resetTeamState } from '../../features/user/userSlice'
 import { leaveTeam } from '../../features/team/teamActions'
 import { useDispatch, useSelector } from 'react-redux'
+import AlertDialogButton from '../misc/AlertDialogButton'
 
 const Navbar = () => {
 	const dispatch = useDispatch()
@@ -56,17 +57,17 @@ const Navbar = () => {
 						{name ? (
 							<>
 								<Text>Welcome, {name} | </Text>
-								<Text>Team: {teamName}</Text>
+								<Text>
+									Team Name: {teamName}{' '}
+									{userData.team && ' / Team Code: ' + userData.team.teamCode}{' '}
+								</Text>
 
 								{userData.team && (
 									<>
-										<Button
-											colorScheme='red'
-											size='sm'
-											onClick={handleLeaveTeam}
-										>
-											Leave Team
-										</Button>
+										<AlertDialogButton
+											buttonMessage='Leave Team'
+											confirmEvent={handleLeaveTeam}
+										/>
 									</>
 								)}
 								<Button colorScheme='blue' onClick={handleLogout} size='md'>

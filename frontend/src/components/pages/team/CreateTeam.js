@@ -8,9 +8,9 @@ const CreateTeam = ({ setJoinTeamPage, email }) => {
 	const [teamName, setTeamName] = useState('')
 	const dispatch = useDispatch()
 
-	const handlePageSwitch = async () => {
+	const handlePageSwitch = () => {
 		setJoinTeamPage(true)
-		await dispatch(resetTeamState())
+		dispatch(resetTeamState())
 	}
 
 	return (

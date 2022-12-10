@@ -13,14 +13,12 @@ import JoinTeam from './JoinTeam'
 
 const Team = () => {
 	const state = useSelector((state) => state.user)
-	const navigate = useNavigate()
 	const [joinTeamPage, setJoinTeamPage] = useState(true)
-	const team = state.userData?.team
-	const error = state?.teamState?.error
+	const navigate = useNavigate()
 
 	useEffect(() => {
-		if (team) navigate('/home')
-	}, [team, navigate])
+		if (state?.userData?.team) navigate('/home')
+	}, [state, navigate])
 
 	return (
 		<Container
@@ -35,10 +33,10 @@ const Team = () => {
 			}}
 		>
 			<Stack spacing='6'>
-				{error && (
+				{state?.teamState?.error && (
 					<Alert status='error'>
 						<AlertIcon />
-						<AlertTitle>{error}</AlertTitle>
+						<AlertTitle>{state?.teamState?.error}</AlertTitle>
 					</Alert>
 				)}
 

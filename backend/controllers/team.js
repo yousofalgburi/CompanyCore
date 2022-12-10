@@ -81,6 +81,16 @@ const leaveTeam = async (req, res) => {
 			[null, email]
 		)
 
+		const teamResult = await pool.query('SELECT * FROM users WHERE team = $1', [
+			results.rows[0].team,
+		])
+
+		if (teamResult?.rows[0]) {
+			await pool.query('DELETE FROM teams WHERE teamcode = $1', [
+				results.rows[0].team,
+			])
+		}
+
 		res.status(201).json()
 	} catch (error) {
 		res.status(500).json({ message: 'Something went wrong' })

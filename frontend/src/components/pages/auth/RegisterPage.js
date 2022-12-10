@@ -15,23 +15,34 @@ import {
 import PasswordField from './PasswordField'
 import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import { Form, Formik } from 'formik'
+import * as Yup from 'yup'
 import InputField from './InputField'
 import { useDispatch, useSelector } from 'react-redux'
-import { signinUser } from '../../features/user/userAction'
-import { resetAuthState } from '../../features/user/userSlice'
+import { registerUser } from '../../../features/user/userAction'
+import { resetAuthState } from '../../../features/user/userSlice'
 import { useEffect } from 'react'
 
-const LoginPage = () => {
+const RegisterPage = () => {
 	const dispatch = useDispatch()
+	const user = useSelector((state) => state.user)
+	const { error, success } = user
 	const navigate = useNavigate()
 
-	const state = useSelector((state) => state.user)
-	const { error, success } = state.authState
-	const user = state.userData
-
 	useEffect(() => {
-		if (user) navigate('/')
+		if (user?.userData) navigate('/team')
 	}, [user, navigate])
+
+	const ValidationSchema = {
+		name: Yup.string()
+			.min(2, 'Too Short!')
+			.max(50, 'Too Long!')
+			.required('name required'),
+		email: Yup.string().email('Invalid email').required('email required'),
+		password: Yup.string().min(8, 'too short!').required('password required'),
+		confirmPassword: Yup.string()
+			.required('confirm password required')
+			.oneOf([Yup.ref('password'), null], 'passwords must match'),
+	}
 
 	return (
 		<Container
@@ -60,24 +71,33 @@ const LoginPage = () => {
 								<AlertTitle>{error}</AlertTitle>
 							</Alert>
 						)}
+						{success && !error && (
+							<Alert status='success'>
+								<AlertIcon />
+								<AlertTitle>
+									Success! Please check your email to verify your account and
+									complete registration.
+								</AlertTitle>
+							</Alert>
+						)}
 						<Heading
 							size={useBreakpointValue({
 								base: 'xs',
 								md: 'sm',
 							})}
 						>
-							Sign in to your account
+							Register a new account
 						</Heading>
 						<HStack spacing='1' justify='center'>
-							<Text color='muted'>Need to create an account?</Text>
+							<Text color='muted'>Already have an account?</Text>
 							<Button
 								variant='link'
 								as={ReachLink}
-								to='/auth/register'
+								to='/auth/login'
 								colorScheme='blue'
 								onClick={dispatch(resetAuthState)}
 							>
-								Register
+								Login
 							</Button>
 						</HStack>
 					</Stack>
@@ -106,16 +126,25 @@ const LoginPage = () => {
 				>
 					<Formik
 						initialValues={{
+							name: '',
 							email: '',
 							password: '',
+							confirmPassword: '',
 						}}
+						validationSchema={Yup.object(ValidationSchema)}
 						onSubmit={(values, actions) => {
 							actions.setSubmitting(true)
-							dispatch(signinUser(values))
+							dispatch(registerUser(values))
 						}}
 					>
 						{(formik) => (
 							<Stack spacing='4' as={Form} onSubmit={formik.handleSubmit}>
+								<InputField
+									label='Name'
+									name='name'
+									placeholder='name'
+									type='text'
+								/>
 								<InputField
 									label='Email'
 									name='email'
@@ -127,13 +156,18 @@ const LoginPage = () => {
 									name='password'
 									placeholder='password'
 								/>
+								<PasswordField
+									formik={formik}
+									name='confirmPassword'
+									placeholder='confirm password'
+								/>
 								<Button
 									mt={4}
 									isLoading={formik.isSubmitting && !error && !success}
 									colorScheme='blue'
 									type='submit'
 								>
-									Sign in
+									Create Account
 								</Button>
 							</Stack>
 						)}
@@ -144,4 +178,4 @@ const LoginPage = () => {
 	)
 }
 
-export default LoginPage
+export default RegisterPage
